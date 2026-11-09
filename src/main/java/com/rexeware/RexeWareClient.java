@@ -9,11 +9,15 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class RexeWareClient implements ClientModInitializer {
     /** ClickGUI tusu, varsayilan R. Oyun ayarlarindan degistirilebilir. */
     public static KeyBinding openGuiKey;
+
+    private static boolean keyWasDown;
+    private static boolean greeted;
 
     @Override
     public void onInitializeClient() {
@@ -27,10 +31,21 @@ public class RexeWareClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // Baska bir mod ayni tusa bagliysa bile calissin diye tusu dogrudan klavyeden okuyoruz.
             while (openGuiKey.wasPressed()) {
-                if (client.currentScreen == null && client.player != null) {
-                    client.setScreen(new ClickGuiScreen());
-                }
+                // kuyrugu bosalt
+            }
+            int code = KeyBindingHelper.getBoundKeyOf(openGuiKey).getCode();
+            boolean down = code != GLFW.GLFW_KEY_UNKNOWN
+                    && InputUtil.isKeyPressed(client.getWindow().getHandle(), code);
+            if (down && !keyWasDown && client.currentScreen == null && client.player != null) {
+                client.setScreen(new ClickGuiScreen());
+            }
+            keyWasDown = down;
+
+            if (!greeted && client.player != null) {
+                greeted = true;
+                client.player.sendMessage(Text.literal("[RexeWare] yuklendi, ClickGUI: R"), false);
             }
         });
     }
