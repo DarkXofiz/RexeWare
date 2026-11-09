@@ -11,6 +11,8 @@ public final class ElytraTarget {
     public static float rotationSpeed = 12.0f;
     public static double predictTicks = 3.0;
     public static boolean playersOnly = true;
+    public static boolean visibleOnly = false;
+    public static boolean lowestHealth = false;
 
     private static LivingEntity target;
 
@@ -27,7 +29,7 @@ public final class ElytraTarget {
         if (!enabled || mc.player == null || mc.world == null || !mc.player.isFallFlying()) {
             return;
         }
-        target = CombatUtil.findTarget(range, playersOnly);
+        target = CombatUtil.findTarget(range, playersOnly, visibleOnly, lowestHealth);
         if (target == null) {
             return;
         }

@@ -41,8 +41,11 @@ public final class ClickGuiScreen extends Screen {
         combat.modules.add(new ModuleEntry("AttackAura", () -> AttackAura.enabled, v -> AttackAura.enabled = v)
                 .add(new Setting.Slider("Range", 1.0, 6.0, 0.1, 1, () -> AttackAura.range, v -> AttackAura.range = v))
                 .add(new Setting.Slider("Rotation Speed", 5.0, 180.0, 1.0, 0, () -> AttackAura.rotationSpeed, v -> AttackAura.rotationSpeed = (float) v))
+                .add(new Setting.Slider("Cooldown", 0.5, 1.0, 0.05, 2, () -> AttackAura.cooldown, v -> AttackAura.cooldown = (float) v))
                 .add(new Setting.Bool("Rotate", () -> AttackAura.rotate, v -> AttackAura.rotate = v))
-                .add(new Setting.Bool("Players Only", () -> AttackAura.playersOnly, v -> AttackAura.playersOnly = v)));
+                .add(new Setting.Bool("Players Only", () -> AttackAura.playersOnly, v -> AttackAura.playersOnly = v))
+                .add(new Setting.Bool("Visible Only", () -> AttackAura.visibleOnly, v -> AttackAura.visibleOnly = v))
+                .add(new Setting.Bool("Low Health First", () -> AttackAura.lowestHealth, v -> AttackAura.lowestHealth = v)));
         list.add(combat);
 
         Panel elytra = new Panel("ELYTRA");
@@ -50,7 +53,9 @@ public final class ClickGuiScreen extends Screen {
                 .add(new Setting.Slider("Range", 8.0, 128.0, 1.0, 0, () -> ElytraTarget.range, v -> ElytraTarget.range = v))
                 .add(new Setting.Slider("Rotation Speed", 1.0, 60.0, 1.0, 0, () -> ElytraTarget.rotationSpeed, v -> ElytraTarget.rotationSpeed = (float) v))
                 .add(new Setting.Slider("Predict Ticks", 0.0, 10.0, 0.5, 1, () -> ElytraTarget.predictTicks, v -> ElytraTarget.predictTicks = v))
-                .add(new Setting.Bool("Players Only", () -> ElytraTarget.playersOnly, v -> ElytraTarget.playersOnly = v)));
+                .add(new Setting.Bool("Players Only", () -> ElytraTarget.playersOnly, v -> ElytraTarget.playersOnly = v))
+                .add(new Setting.Bool("Visible Only", () -> ElytraTarget.visibleOnly, v -> ElytraTarget.visibleOnly = v))
+                .add(new Setting.Bool("Low Health First", () -> ElytraTarget.lowestHealth, v -> ElytraTarget.lowestHealth = v)));
         elytra.modules.add(new ModuleEntry("ElytraHelper", () -> ElytraHelper.enabled, v -> ElytraHelper.enabled = v)
                 .add(new Setting.Bool("Auto Takeoff", () -> ElytraHelper.autoTakeoff, v -> ElytraHelper.autoTakeoff = v))
                 .add(new Setting.Bool("Auto Firework", () -> ElytraHelper.autoFirework, v -> ElytraHelper.autoFirework = v))

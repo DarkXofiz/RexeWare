@@ -3,7 +3,7 @@
   "id": "rexeware",
   "version": "${version}",
   "name": "RexeWare 1.20.1",
-  "description": "RexeWare ClickGUI (R) with AttackAura, ElytraTarget and ElytraHelper for Minecraft 1.20.1.",
+  "description": "RexeWare ClickGUI (R) and HUD with AttackAura, ElytraTarget and ElytraHelper for Minecraft 1.20.1.",
   "authors": ["RexeWare"],
   "license": "MIT",
   "environment": "client",

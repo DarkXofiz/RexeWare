@@ -4,10 +4,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /** Shared helpers for AttackAura, ElytraTarget and ElytraHelper (Minecraft 1.20.1, Yarn). */
@@ -18,30 +21,40 @@ public final class CombatUtil {
     private CombatUtil() {
     }
 
-    public static LivingEntity findTarget(double range, boolean playersOnly) {
+    /**
+     * En uygun hedefi bulur. Tum dunyayi taramak yerine sadece menzil kutusundaki varliklari sorgular,
+     * bu yuzden kalabalik sunucularda da FPS dusurmez.
+     */
+    public static LivingEntity findTarget(double range, boolean playersOnly, boolean visibleOnly, boolean lowestHealth) {
         MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.player == null || mc.world == null) {
+        ClientPlayerEntity self = mc.player;
+        if (self == null || mc.world == null) {
             return null;
         }
+        Box box = self.getBoundingBox().expand(range);
+        List<LivingEntity> nearby = mc.world.getEntitiesByClass(LivingEntity.class, box, e ->
+                e != self
+                        && e.isAlive()
+                        && !e.isSpectator()
+                        && !(e instanceof ArmorStandEntity)
+                        && (!playersOnly || e instanceof PlayerEntity)
+                        && !friendCheck.test(e));
+
+        double maxDistSq = range * range;
         LivingEntity best = null;
-        double bestDist = range * range;
-        for (Entity entity : mc.world.getEntities()) {
-            if (!(entity instanceof LivingEntity living) || entity == mc.player) {
+        double bestScore = Double.MAX_VALUE;
+        for (LivingEntity e : nearby) {
+            double distSq = self.squaredDistanceTo(e);
+            if (distSq > maxDistSq) {
                 continue;
             }
-            if (!living.isAlive() || living.isSpectator()) {
+            if (visibleOnly && !self.canSee(e)) {
                 continue;
             }
-            if (playersOnly && !(living instanceof PlayerEntity)) {
-                continue;
-            }
-            if (friendCheck.test(living)) {
-                continue;
-            }
-            double dist = mc.player.squaredDistanceTo(living);
-            if (dist <= bestDist) {
-                bestDist = dist;
-                best = living;
+            double score = lowestHealth ? (e.getHealth() + e.getAbsorptionAmount()) * 1000.0 + distSq : distSq;
+            if (score < bestScore) {
+                bestScore = score;
+                best = e;
             }
         }
         return best;
