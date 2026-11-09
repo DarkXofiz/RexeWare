@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "rexeware",
+  "version": "${version}",
+  "name": "RexeWare 1.20.1",
+  "description": "AttackAura, ElytraTarget and ElytraHelper for Minecraft 1.20.1.",
+  "authors": ["RexeWare"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.rexeware.RexeWareClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "fabric-api": "*",
+    "minecraft": "1.20.1",
+    "java": ">=17"
+  }
+}
