@@ -1,5 +1,6 @@
 package com.rexeware.gui;
 
+import com.rexeware.Hud;
 import com.rexeware.RexeWareClient;
 import com.rexeware.modules.AttackAura;
 import com.rexeware.modules.ElytraHelper;
@@ -57,20 +58,31 @@ public final class ClickGuiScreen extends Screen {
                 .add(new Setting.Slider("Firework Delay", 5.0, 100.0, 1.0, 0, () -> ElytraHelper.fireworkDelay, v -> ElytraHelper.fireworkDelay = (int) Math.round(v))));
         list.add(elytra);
 
+        Panel visual = new Panel("VISUAL");
+        visual.modules.add(new ModuleEntry("HUD", () -> Hud.enabled, v -> Hud.enabled = v)
+                .add(new Setting.Bool("Watermark", () -> Hud.watermark, v -> Hud.watermark = v))
+                .add(new Setting.Bool("Module List", () -> Hud.moduleList, v -> Hud.moduleList = v))
+                .add(new Setting.Bool("Coordinates", () -> Hud.coords, v -> Hud.coords = v)));
+        list.add(visual);
+
         return list;
     }
 
     @Override
     protected void init() {
         int n = panels.size();
-        int totalW = n * Panel.WIDTH + (n - 1) * GAP;
-        int startX = (this.width - totalW) / 2;
+        int perRow = Math.max(1, (this.width - 16 + GAP) / (Panel.WIDTH + GAP));
         for (int i = 0; i < n; i++) {
             Panel p = panels.get(i);
-            if (p.x == Integer.MIN_VALUE) {
-                p.x = startX + i * (Panel.WIDTH + GAP);
-                p.y = 40;
+            if (p.x != Integer.MIN_VALUE) {
+                continue;
             }
+            int row = i / perRow;
+            int col = i % perRow;
+            int inRow = Math.min(perRow, n - row * perRow);
+            int startX = (this.width - (inRow * Panel.WIDTH + (inRow - 1) * GAP)) / 2;
+            p.x = startX + col * (Panel.WIDTH + GAP);
+            p.y = 40 + row * 140;
         }
     }
 
